@@ -1,0 +1,26 @@
+{
+  "name": "lostandfoundapp",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=backend && npm run build --workspace=frontend",
+    "lint": "eslint packages/shared/src backend/src frontend/src --ext .ts,.tsx",
+    "typecheck": "npm run typecheck --workspace=packages/shared && npm run typecheck --workspace=backend && npm run typecheck --workspace=frontend",
+    "migrate": "npm run migrate --workspace=backend"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  }
+}
