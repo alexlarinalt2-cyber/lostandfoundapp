@@ -3,13 +3,16 @@ import http from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { createApp } from './app';
 import { env } from './config/env';
-import { connectRedis, redis } from './config/redis';
+import { connectRedis } from './config/redis';
 import { initSocket } from './services/socket.service';
-import { authenticate } from './middleware/auth.middleware';
 import type { AuthPayload } from './middleware/auth.middleware';
+import { runMigrations } from './db/migrate';
 import jwt from 'jsonwebtoken';
 
 async function main() {
+  console.log('Running database migrations...');
+  await runMigrations();
+
   await connectRedis();
 
   const app = createApp();

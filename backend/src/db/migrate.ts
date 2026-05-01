@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Pool } from 'pg';
 
-async function migrate() {
+export async function runMigrations() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     console.error('DATABASE_URL is not set');
@@ -44,7 +44,10 @@ async function migrate() {
   console.log('Migrations complete.');
 }
 
-migrate().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Allow running directly: npx tsx src/db/migrate.ts
+if (require.main === module) {
+  runMigrations().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
