@@ -24,7 +24,8 @@ export async function register(input: RegisterInput) {
   const existing = await usersRepo.findByEmail(input.email);
   if (existing) throw Object.assign(new Error('Email already in use'), { status: 409 });
 
-  const passwordHash = await bcrypt.hash(input.password, 12);
+  const cost = process.env.NODE_ENV === 'test' ? 4 : 12;
+  const passwordHash = await bcrypt.hash(input.password, cost);
   const user = await usersRepo.create({ email: input.email, passwordHash, displayName: input.displayName });
 
   const accessToken = signAccess(user.id, user.email, user.role);
@@ -36,7 +37,7 @@ export async function login(input: LoginInput) {
   const user = await usersRepo.findByEmail(input.email);
   if (!user) throw Object.assign(new Error('Invalid credentials'), { status: 401 });
 
-  const valid = await bcrypt.compare(input.password, user.passwordHash);
+  const valid = await bcrypt.compare(input.password, user.password_hash);
   if (!valid) throw Object.assign(new Error('Invalid credentials'), { status: 401 });
 
   const accessToken = signAccess(user.id, user.email, user.role);
@@ -75,7 +76,8 @@ export async function resetPassword({ token, password }: ResetPasswordInput) {
   const userId = await redis.get(`${RESET_PREFIX}${token}`);
   if (!userId) throw Object.assign(new Error('Invalid or expired reset token'), { status: 400 });
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  const cost = process.env.NODE_ENV === 'test' ? 4 : 12;
+  const passwordHash = await bcrypt.hash(password, cost);
   await usersRepo.updatePassword(userId, passwordHash);
   await redis.del(`${RESET_PREFIX}${token}`);
 }

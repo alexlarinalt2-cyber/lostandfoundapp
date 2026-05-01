@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validate } from '../../middleware/validate.middleware';
+import { asyncHandler } from '../../middleware/async.middleware';
 import {
   RegisterSchema,
   LoginSchema,
@@ -17,9 +18,9 @@ import {
 
 export const authRouter = Router();
 
-authRouter.post('/register', validate(RegisterSchema), register);
-authRouter.post('/login', validate(LoginSchema), login);
-authRouter.post('/refresh', refresh);
-authRouter.post('/logout', logout);
-authRouter.post('/forgot-password', validate(ForgotPasswordSchema), forgotPassword);
-authRouter.post('/reset-password', validate(ResetPasswordSchema), resetPassword);
+authRouter.post('/register', validate(RegisterSchema), asyncHandler(register));
+authRouter.post('/login', validate(LoginSchema), asyncHandler(login));
+authRouter.post('/refresh', asyncHandler(refresh));
+authRouter.post('/logout', asyncHandler(logout));
+authRouter.post('/forgot-password', validate(ForgotPasswordSchema), asyncHandler(forgotPassword));
+authRouter.post('/reset-password', validate(ResetPasswordSchema), asyncHandler(resetPassword));

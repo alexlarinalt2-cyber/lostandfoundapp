@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validate.middleware';
+import { asyncHandler } from '../../middleware/async.middleware';
 import { CreateSpaceSchema, JoinSpaceSchema, UpdateSpaceSchema, UpdateMemberRoleSchema } from '@laf/shared';
 import {
   listSpaces,
@@ -16,11 +17,11 @@ import {
 export const spacesRouter = Router();
 
 spacesRouter.use(authenticate);
-spacesRouter.get('/', listSpaces);
-spacesRouter.post('/', validate(CreateSpaceSchema), createSpace);
-spacesRouter.post('/join', validate(JoinSpaceSchema), joinSpace);
-spacesRouter.get('/:id', getSpace);
-spacesRouter.patch('/:id', validate(UpdateSpaceSchema), updateSpace);
-spacesRouter.get('/:id/members', listMembers);
-spacesRouter.patch('/:id/members/:userId', validate(UpdateMemberRoleSchema), updateMemberRole);
-spacesRouter.delete('/:id/members/:userId', removeMember);
+spacesRouter.get('/', asyncHandler(listSpaces));
+spacesRouter.post('/', validate(CreateSpaceSchema), asyncHandler(createSpace));
+spacesRouter.post('/join', validate(JoinSpaceSchema), asyncHandler(joinSpace));
+spacesRouter.get('/:id', asyncHandler(getSpace));
+spacesRouter.patch('/:id', validate(UpdateSpaceSchema), asyncHandler(updateSpace));
+spacesRouter.get('/:id/members', asyncHandler(listMembers));
+spacesRouter.patch('/:id/members/:userId', validate(UpdateMemberRoleSchema), asyncHandler(updateMemberRole));
+spacesRouter.delete('/:id/members/:userId', asyncHandler(removeMember));
