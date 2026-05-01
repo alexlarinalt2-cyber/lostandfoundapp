@@ -7,7 +7,7 @@ export function setAccessToken(token: string | null) {
 }
 
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL ?? '/api',
   withCredentials: true,
 });
 
