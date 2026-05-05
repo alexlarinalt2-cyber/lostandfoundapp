@@ -30,6 +30,20 @@ export default function SpacePage() {
         <span className="text-gray-300">/</span>
         <span className="text-sm font-medium text-gray-900">{space?.name ?? '...'}</span>
         <div className="ml-auto flex gap-2">
+          {space?.member_role === 'manager' && (
+            <Link
+              to={`/spaces/${spaceId}/manage`}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              Manager View
+            </Link>
+          )}
+          <Link
+            to={`/spaces/${spaceId}/settings`}
+            className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            Settings
+          </Link>
           <Link
             to={`/spaces/${spaceId}/report`}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"

@@ -12,6 +12,7 @@ import {
   listMembers,
   updateMemberRole,
   removeMember,
+  leaveSpace,
 } from './spaces.controller';
 
 export const spacesRouter = Router();
@@ -25,3 +26,4 @@ spacesRouter.patch('/:id', validate(UpdateSpaceSchema), asyncHandler(updateSpace
 spacesRouter.get('/:id/members', asyncHandler(listMembers));
 spacesRouter.patch('/:id/members/:userId', validate(UpdateMemberRoleSchema), asyncHandler(updateMemberRole));
 spacesRouter.delete('/:id/members/:userId', asyncHandler(removeMember));
+spacesRouter.delete('/:id/leave', asyncHandler(leaveSpace));

@@ -17,9 +17,26 @@ export async function findByUser(userId: string) {
   return rows;
 }
 
-export async function findById(spaceId: string) {
+export async function findById(spaceId: string, userId?: string) {
+  if (userId) {
+    const { rows } = await pool.query(
+      `SELECT s.*, sm.role AS member_role
+       FROM spaces s
+       JOIN space_memberships sm ON sm.space_id = s.id AND sm.user_id = $2
+       WHERE s.id = $1`,
+      [spaceId, userId],
+    );
+    return rows[0] ?? null;
+  }
   const { rows } = await pool.query('SELECT * FROM spaces WHERE id = $1', [spaceId]);
   return rows[0] ?? null;
+}
+
+export async function leave(spaceId: string, userId: string) {
+  await pool.query('DELETE FROM space_memberships WHERE space_id = $1 AND user_id = $2', [
+    spaceId,
+    userId,
+  ]);
 }
 
 export async function findByInviteCode(code: string) {

@@ -28,8 +28,15 @@ export async function joinSpace(req: Request, res: Response) {
 export async function getSpace(req: Request, res: Response) {
   const membership = await requireMembership(req.params.id, req.user!.userId);
   if (!membership) return res.status(403).json({ success: false, error: { message: 'Forbidden' } });
-  const space = await spacesRepo.findById(req.params.id);
+  const space = await spacesRepo.findById(req.params.id, req.user!.userId);
   res.json({ success: true, data: space });
+}
+
+export async function leaveSpace(req: Request, res: Response) {
+  const membership = await requireMembership(req.params.id, req.user!.userId);
+  if (!membership) return res.status(403).json({ success: false, error: { message: 'Forbidden' } });
+  await spacesRepo.leave(req.params.id, req.user!.userId);
+  res.json({ success: true, data: null });
 }
 
 export async function updateSpace(req: Request, res: Response) {

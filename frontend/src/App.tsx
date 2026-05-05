@@ -7,6 +7,7 @@ import SpacePage from './pages/SpacePage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import ReportItemPage from './pages/ReportItemPage';
 import ManagerDashboardPage from './pages/ManagerDashboardPage';
+import SpaceSettingsPage from './pages/SpaceSettingsPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -23,6 +24,7 @@ export default function App() {
       <Route path="/" element={<RequireAuth><DashboardPage /></RequireAuth>} />
       <Route path="/spaces/:spaceId" element={<RequireAuth><SpacePage /></RequireAuth>} />
       <Route path="/spaces/:spaceId/manage" element={<RequireAuth><ManagerDashboardPage /></RequireAuth>} />
+      <Route path="/spaces/:spaceId/settings" element={<RequireAuth><SpaceSettingsPage /></RequireAuth>} />
       <Route path="/spaces/:spaceId/report" element={<RequireAuth><ReportItemPage /></RequireAuth>} />
       <Route path="/items/:itemId" element={<RequireAuth><ItemDetailPage /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />
