@@ -45,3 +45,8 @@ export async function leaveSpace(spaceId: string) {
   const { data } = await apiClient.delete(`/spaces/${spaceId}/leave`);
   return data.data;
 }
+
+export async function deleteSpace(spaceId: string) {
+  const { data } = await apiClient.delete(`/spaces/${spaceId}`);
+  return data.data;
+}

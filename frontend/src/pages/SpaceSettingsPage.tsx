@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateSpaceSchema, type UpdateSpaceInput } from '@laf/shared';
-import { getSpace, listMembers, updateSpace, updateMemberRole, removeMember, leaveSpace } from '../api/spaces.api';
+import { getSpace, listMembers, updateSpace, updateMemberRole, removeMember, leaveSpace, deleteSpace } from '../api/spaces.api';
 import { useAuth } from '../context/AuthContext';
 
 export default function SpaceSettingsPage() {
@@ -49,6 +49,14 @@ export default function SpaceSettingsPage() {
 
   const leaveMutation = useMutation({
     mutationFn: () => leaveSpace(spaceId!),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['spaces'] });
+      navigate('/');
+    },
+  });
+
+  const deleteSpaceMutation = useMutation({
+    mutationFn: () => deleteSpace(spaceId!),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['spaces'] });
       navigate('/');
@@ -176,6 +184,21 @@ export default function SpaceSettingsPage() {
               className="px-4 py-2 text-sm border border-red-300 text-red-600 rounded-md hover:bg-red-50 disabled:opacity-50"
             >
               {leaveMutation.isPending ? 'Leaving...' : 'Leave Space'}
+            </button>
+          </section>
+        )}
+
+        {/* Delete Space (managers only) */}
+        {isManager && (
+          <section className="bg-white rounded-lg border border-red-100 p-6">
+            <h2 className="text-base font-semibold text-red-700 mb-1">Danger Zone</h2>
+            <p className="text-sm text-gray-500 mb-4">Permanently delete this space and all its items. This cannot be undone.</p>
+            <button
+              onClick={() => { if (confirm('Delete this space permanently? All items will be lost.')) deleteSpaceMutation.mutate(); }}
+              disabled={deleteSpaceMutation.isPending}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+            >
+              {deleteSpaceMutation.isPending ? 'Deleting...' : 'Delete Space'}
             </button>
           </section>
         )}

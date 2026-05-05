@@ -45,9 +45,7 @@ export async function createItem(spaceId: string, input: CreateItemInput, photos
   const form = new FormData();
   Object.entries(input).forEach(([k, v]) => { if (v !== undefined) form.append(k, String(v)); });
   photos.forEach((f) => form.append('photos', f));
-  const { data } = await apiClient.post(`/spaces/${spaceId}/items`, form, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const { data } = await apiClient.post(`/spaces/${spaceId}/items`, form);
   return data.data;
 }
 

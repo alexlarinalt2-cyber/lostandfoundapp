@@ -66,3 +66,10 @@ export async function removeMember(req: Request, res: Response) {
   await spacesRepo.removeMember(req.params.id, req.params.userId);
   res.json({ success: true, data: null });
 }
+
+export async function deleteSpace(req: Request, res: Response) {
+  const membership = await requireMembership(req.params.id, req.user!.userId, 'manager');
+  if (!membership) return res.status(403).json({ success: false, error: { message: 'Forbidden' } });
+  await spacesRepo.deleteSpace(req.params.id);
+  res.json({ success: true, data: null });
+}

@@ -11,6 +11,9 @@ export const itemsRouter = Router();
 itemsRouter.use(authenticate);
 itemsRouter.get('/:spaceId/items', validate(ListItemsQuerySchema, 'query'), asyncHandler(listItems));
 itemsRouter.post('/:spaceId/items', upload.array('photos', 3), validate(CreateItemSchema), asyncHandler(createItem));
-itemsRouter.get('/items/:id', asyncHandler(getItem));
-itemsRouter.patch('/items/:id', validate(UpdateItemSchema), asyncHandler(updateItem));
-itemsRouter.delete('/items/:id', asyncHandler(deleteItem));
+
+export const itemDetailRouter = Router();
+itemDetailRouter.use(authenticate);
+itemDetailRouter.get('/:id', asyncHandler(getItem));
+itemDetailRouter.patch('/:id', validate(UpdateItemSchema), asyncHandler(updateItem));
+itemDetailRouter.delete('/:id', asyncHandler(deleteItem));

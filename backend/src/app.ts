@@ -7,7 +7,7 @@ import { errorHandler } from './middleware/error.middleware';
 import { authRouter } from './modules/auth/auth.routes';
 import { usersRouter } from './modules/users/users.routes';
 import { spacesRouter } from './modules/spaces/spaces.routes';
-import { itemsRouter } from './modules/items/items.routes';
+import { itemsRouter, itemDetailRouter } from './modules/items/items.routes';
 import { claimsRouter } from './modules/claims/claims.routes';
 import { notificationsRouter } from './modules/notifications/notifications.routes';
 
@@ -27,6 +27,7 @@ export function createApp() {
   app.use('/api/users', usersRouter);
   app.use('/api/spaces', spacesRouter);
   app.use('/api/spaces', itemsRouter);
+  app.use('/api/items', itemDetailRouter);
   app.use('/api/items', claimsRouter);
   app.use('/api/notifications', notificationsRouter);
 

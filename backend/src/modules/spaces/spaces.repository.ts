@@ -115,6 +115,10 @@ export async function removeMember(spaceId: string, userId: string) {
   ]);
 }
 
+export async function deleteSpace(spaceId: string) {
+  await pool.query('DELETE FROM spaces WHERE id = $1', [spaceId]);
+}
+
 export async function update(spaceId: string, input: { name?: string; address?: string }) {
   const { rows } = await pool.query(
     `UPDATE spaces SET name = COALESCE($1, name), address = COALESCE($2, address) WHERE id = $3 RETURNING *`,
