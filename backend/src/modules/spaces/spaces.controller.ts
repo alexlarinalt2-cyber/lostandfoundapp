@@ -19,7 +19,7 @@ export async function createSpace(req: Request, res: Response) {
 }
 
 export async function joinSpace(req: Request, res: Response) {
-  const space = await spacesRepo.findByInviteCode(req.body.inviteCode);
+  const space = await spacesRepo.findByInviteCode((req.body.inviteCode as string).toUpperCase());
   if (!space) return res.status(404).json({ success: false, error: { message: 'Invalid invite code' } });
   await spacesRepo.addMember(space.id, req.user!.userId);
   res.json({ success: true, data: space });

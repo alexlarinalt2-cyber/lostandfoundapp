@@ -26,17 +26,21 @@ export async function createItem(req: Request, res: Response) {
   const item = await itemsRepo.create(spaceId, req.user!.userId, req.body as CreateItemInput);
 
   const files = (req.files as Express.Multer.File[]) ?? [];
-  if (files.length > 0) {
-    const uploaded = await Promise.all(
-      files.map((f, i) =>
-        uploadImage(f.buffer, `lostandfound/${spaceId}`).then((r) => ({
-          url: r.url,
-          thumbnailUrl: r.thumbnailUrl,
-          order: i,
-        })),
-      ),
-    );
-    await itemsRepo.addPhotos(item.id, uploaded);
+  if (files.length > 0 && env.CLOUDINARY_CLOUD_NAME) {
+    try {
+      const uploaded = await Promise.all(
+        files.map((f, i) =>
+          uploadImage(f.buffer, `lostandfound/${spaceId}`).then((r) => ({
+            url: r.url,
+            thumbnailUrl: r.thumbnailUrl,
+            order: i,
+          })),
+        ),
+      );
+      await itemsRepo.addPhotos(item.id, uploaded);
+    } catch (err) {
+      console.error('Photo upload failed, skipping:', err);
+    }
   }
 
   const full = await itemsRepo.findById(item.id);
