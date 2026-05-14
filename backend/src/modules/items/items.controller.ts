@@ -25,9 +25,9 @@ export async function createItem(req: Request, res: Response) {
 
   const item = await itemsRepo.create(spaceId, req.user!.userId, req.body as CreateItemInput);
 
-  const files = (req.files as Express.Multer.File[]) ?? [];
-  if (files.length > 0 && env.CLOUDINARY_CLOUD_NAME) {
-    try {
+  try {
+    const files = (req.files as Express.Multer.File[]) ?? [];
+    if (files.length > 0 && env.CLOUDINARY_CLOUD_NAME) {
       const uploaded = await Promise.all(
         files.map((f, i) =>
           uploadImage(f.buffer, `lostandfound/${spaceId}`).then((r) => ({
@@ -38,13 +38,19 @@ export async function createItem(req: Request, res: Response) {
         ),
       );
       await itemsRepo.addPhotos(item.id, uploaded);
-    } catch (err) {
-      console.error('Photo upload failed, skipping:', err);
     }
+  } catch (err) {
+    console.error('Photo upload failed, item saved without photos:', err);
   }
 
-  const full = await itemsRepo.findById(item.id);
-  emitToSpace(spaceId, 'item:new', full);
+  let full = item;
+  try {
+    full = await itemsRepo.findById(item.id);
+    emitToSpace(spaceId, 'item:new', full);
+  } catch (err) {
+    console.error('Post-creation fetch/emit failed:', err);
+  }
+
   res.status(201).json({ success: true, data: full });
 }
 
