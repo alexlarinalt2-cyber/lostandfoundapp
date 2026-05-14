@@ -69,12 +69,12 @@ export default function SpaceSettingsPage() {
 
   const leaveMutation = useMutation({
     mutationFn: () => leaveSpace(spaceId!),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['spaces'] }); navigate('/'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['spaces'] }); navigate('/dashboard'); },
   });
 
   const deleteSpaceMutation = useMutation({
     mutationFn: () => deleteSpace(spaceId!),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['spaces'] }); navigate('/'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['spaces'] }); navigate('/dashboard'); },
   });
 
   function copyCode() {
@@ -135,7 +135,7 @@ export default function SpaceSettingsPage() {
       {/* Nav */}
       <nav className="laf-nav" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', letterSpacing: '-0.015em', flexShrink: 0 }}>
+          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', letterSpacing: '-0.015em', flexShrink: 0 }}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--brand-indigo-600)' }}>
               <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
             </svg>
@@ -144,7 +144,7 @@ export default function SpaceSettingsPage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--fg-3)', flexWrap: 'wrap' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            <Link to="/" style={{ color: 'var(--fg-3)', textDecoration: 'none', fontWeight: 500 }}>Dashboard</Link>
+            <Link to="/dashboard" style={{ color: 'var(--fg-3)', textDecoration: 'none', fontWeight: 500 }}>Dashboard</Link>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             <Link to={`/spaces/${spaceId}`} style={{ color: 'var(--fg-3)', textDecoration: 'none', fontWeight: 500 }}>{space?.name ?? '…'}</Link>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>

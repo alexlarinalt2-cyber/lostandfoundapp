@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -9,19 +10,40 @@ import ReportItemPage from './pages/ReportItemPage';
 import ManagerDashboardPage from './pages/ManagerDashboardPage';
 import SpaceSettingsPage from './pages/SpaceSettingsPage';
 
+const Spinner = () => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+    <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid var(--brand-indigo-600)', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
+  </div>
+);
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
-  if (isLoading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  if (isLoading) return <Spinner />;
+  if (!user) return <Navigate to="/" replace />;
   return <>{children}</>;
+}
+
+function RedirectIfAuth({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+}
+
+function RootRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <Spinner />;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <LandingPage />;
 }
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/" element={<RequireAuth><DashboardPage /></RequireAuth>} />
+      <Route path="/" element={<RootRoute />} />
+      <Route path="/login" element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
+      <Route path="/register" element={<RedirectIfAuth><RegisterPage /></RedirectIfAuth>} />
+      <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
       <Route path="/spaces/:spaceId" element={<RequireAuth><SpacePage /></RequireAuth>} />
       <Route path="/spaces/:spaceId/manage" element={<RequireAuth><ManagerDashboardPage /></RequireAuth>} />
       <Route path="/spaces/:spaceId/settings" element={<RequireAuth><SpaceSettingsPage /></RequireAuth>} />

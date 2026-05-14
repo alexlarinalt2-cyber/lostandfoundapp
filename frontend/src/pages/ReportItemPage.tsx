@@ -74,7 +74,7 @@ export default function ReportItemPage() {
           </Link>
 
           <div className="laf-crumb">
-            <Link to="/">Dashboard</Link>
+            <Link to="/dashboard">Dashboard</Link>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sep"><path d="m9 18 6-6-6-6"/></svg>
             <Link to={`/spaces/${spaceId}`}>Space</Link>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sep"><path d="m9 18 6-6-6-6"/></svg>

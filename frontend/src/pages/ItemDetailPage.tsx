@@ -100,7 +100,7 @@ export default function ItemDetailPage() {
       {/* Nav */}
       <nav className="laf-nav">
         <div className="laf-nav-inner">
-          <Link to="/" className="laf-brand" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link to="/dashboard" className="laf-brand" style={{ textDecoration: 'none', color: 'inherit' }}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--brand-indigo-600)' }}>
               <path d="M11 3a8 8 0 1 0 8 8" /><path d="m21 21-4.3-4.3" />
             </svg>
@@ -108,7 +108,7 @@ export default function ItemDetailPage() {
           </Link>
 
           <div className="laf-crumb">
-            <Link to="/">Dashboard</Link>
+            <Link to="/dashboard">Dashboard</Link>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sep"><path d="m9 18 6-6-6-6"/></svg>
             <Link to={`/spaces/${item.spaceId}`}>Space</Link>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sep"><path d="m9 18 6-6-6-6"/></svg>

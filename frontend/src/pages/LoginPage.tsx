@@ -18,7 +18,7 @@ export default function LoginPage() {
     setError('');
     try {
       await login(data);
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setError('Invalid email or password');
     }

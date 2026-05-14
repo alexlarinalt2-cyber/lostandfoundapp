@@ -18,7 +18,7 @@ export default function RegisterPage() {
     setError('');
     try {
       await registerUser(data);
-      navigate('/');
+      navigate('/dashboard');
     } catch (e: unknown) {
       setError((e as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message ?? 'Registration failed');
     }
