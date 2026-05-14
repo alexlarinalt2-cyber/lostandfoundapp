@@ -134,7 +134,7 @@ export default function SpacePage() {
           {/* Stats row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginTop: 24 }}>
             {[
-              { label: 'Total items', value: items.length, iconBg: '#EEF2FF', iconColor: 'var(--brand-indigo-700)', icon: <path d="M21 8H3"/><path d="M21 16H3"/><path d="M3 12h18"/> },
+              { label: 'Total items', value: items.length, iconBg: '#EEF2FF', iconColor: 'var(--brand-indigo-700)', icon: <><path d="M21 8H3"/><path d="M21 16H3"/><path d="M3 12h18"/></> },
               { label: 'Open lost', value: items.filter(i => i.type === 'lost' && i.status === 'open').length, iconBg: '#FEE2E2', iconColor: '#991B1B', icon: <><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></> },
               { label: 'Found', value: items.filter(i => i.type === 'found').length, iconBg: '#D1FAE5', iconColor: '#065F46', icon: <path d="M20 6 9 17l-5-5"/> },
             ].map(s => (

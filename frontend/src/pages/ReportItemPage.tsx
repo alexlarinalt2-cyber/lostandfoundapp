@@ -1,13 +1,13 @@
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateItemSchema, type CreateItemInput } from '@laf/shared';
 import { createItem } from '../api/items.api';
 import { useState } from 'react';
 
 const CATEGORIES = [
-  { id: 'bag',         label: 'Bag',         icon: <><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M8 6V4a4 4 0 0 1 8 0v2"/></> },
+  { id: 'bags',        label: 'Bag',         icon: <><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M8 6V4a4 4 0 0 1 8 0v2"/></> },
   { id: 'electronics', label: 'Electronics', icon: <><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></> },
   { id: 'keys',        label: 'Keys',        icon: <><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></> },
   { id: 'eyewear',     label: 'Eyewear',     icon: <><circle cx="6" cy="14" r="3"/><circle cx="18" cy="14" r="3"/><path d="M9 14 12 6l3 8"/></> },
@@ -24,12 +24,12 @@ export default function ReportItemPage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('bag');
+  const [selectedCategory, setSelectedCategory] = useState('bags');
   const [selectedType, setSelectedType] = useState<'lost' | 'found'>('lost');
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateItemInput>({
     resolver: zodResolver(CreateItemSchema),
-    defaultValues: { type: 'lost', category: 'bag' },
+    defaultValues: { type: 'lost', category: 'bags' },
   });
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -117,7 +117,7 @@ export default function ReportItemPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 320px', gap: 32, alignItems: 'start' }}>
           {/* Form */}
-          <form className="laf-card" onSubmit={handleSubmit(onSubmit)}>
+          <form className="laf-card" onSubmit={handleSubmit(onSubmit as SubmitHandler<CreateItemInput>)}>
 
             {/* Type toggle */}
             <div className="laf-field">
