@@ -50,3 +50,8 @@ export async function deleteSpace(spaceId: string) {
   const { data } = await apiClient.delete(`/spaces/${spaceId}`);
   return data.data;
 }
+
+export async function regenerateInviteCode(spaceId: string) {
+  const { data } = await apiClient.post(`/spaces/${spaceId}/regenerate-invite-code`);
+  return data.data;
+}

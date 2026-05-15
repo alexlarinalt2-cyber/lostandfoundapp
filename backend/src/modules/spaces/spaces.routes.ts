@@ -14,6 +14,7 @@ import {
   removeMember,
   leaveSpace,
   deleteSpace,
+  regenerateInviteCode,
 } from './spaces.controller';
 
 export const spacesRouter = Router();
@@ -29,3 +30,4 @@ spacesRouter.patch('/:id/members/:userId', validate(UpdateMemberRoleSchema), asy
 spacesRouter.delete('/:id/members/:userId', asyncHandler(removeMember));
 spacesRouter.delete('/:id/leave', asyncHandler(leaveSpace));
 spacesRouter.delete('/:id', asyncHandler(deleteSpace));
+spacesRouter.post('/:id/regenerate-invite-code', asyncHandler(regenerateInviteCode));

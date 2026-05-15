@@ -3,6 +3,7 @@ import * as itemsRepo from './items.repository';
 import * as spacesRepo from '../spaces/spaces.repository';
 import { uploadImage } from '../../services/storage.service';
 import { emitToSpace } from '../../services/socket.service';
+import { env } from '../../config/env';
 import type { CreateItemInput, UpdateItemInput, ListItemsQuery } from '@laf/shared';
 
 async function requireSpaceMembership(spaceId: string, userId: string) {

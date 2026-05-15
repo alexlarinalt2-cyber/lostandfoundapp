@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { setAccessToken } from '../api/client';
+import { setAccessToken, apiClient } from '../api/client';
 import * as authApi from '../api/auth.api';
 import type { User, RegisterInput, LoginInput } from '@laf/shared';
 
@@ -22,9 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .refreshToken()
       .then((token) => {
         setAccessToken(token);
-        return fetch('/api/users/me', {
+        return apiClient.get('/users/me', {
           headers: { Authorization: `Bearer ${token}` },
-        }).then((r) => r.json());
+        }).then((r) => r.data);
       })
       .then((res) => setUser(res.data))
       .catch(() => setUser(null))

@@ -1,18 +1,35 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { RegisterSchema, type RegisterInput } from '@laf/shared';
 import { useState } from 'react';
 
+function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: '', color: '#E2E8F0' };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { score, label: 'Weak', color: '#EF4444' };
+  if (score <= 2) return { score, label: 'Fair', color: '#F59E0B' };
+  if (score <= 3) return { score, label: 'Good', color: '#3B82F6' };
+  return { score, label: 'Strong', color: '#10B981' };
+}
+
 export default function RegisterPage() {
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterInput>({
+  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
   });
+
+  const passwordValue = useWatch({ control, name: 'password', defaultValue: '' });
+  const strength = getPasswordStrength(passwordValue ?? '');
 
   async function onSubmit(data: RegisterInput) {
     setError('');
@@ -101,10 +118,27 @@ export default function RegisterPage() {
               </div>
 
               <div className="laf-field">
-                <label className="laf-label" htmlFor="pw">
-                  Password <span className="hint">8+ characters</span>
+                <label className="laf-label" htmlFor="pw" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Password <span className="hint">8+ characters</span></span>
+                  {passwordValue && (
+                    <span style={{ fontSize: 11.5, fontWeight: 600, color: strength.color }}>{strength.label}</span>
+                  )}
                 </label>
                 <input id="pw" type="password" placeholder="••••••••••" className="laf-input" {...register('password')} />
+                {passwordValue && (
+                  <div style={{ display: 'flex', gap: 3, marginTop: 8 }}>
+                    {[1, 2, 3, 4].map((seg) => (
+                      <div
+                        key={seg}
+                        style={{
+                          flex: 1, height: 3, borderRadius: 99,
+                          background: strength.score >= seg ? strength.color : '#E2E8F0',
+                          transition: 'background 200ms ease',
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
                 {errors.password && <p style={{ marginTop: 6, fontSize: 12.5, color: 'var(--color-danger)' }}>{errors.password.message}</p>}
               </div>
 

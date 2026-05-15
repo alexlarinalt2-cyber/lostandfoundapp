@@ -126,3 +126,13 @@ export async function update(spaceId: string, input: { name?: string; address?: 
   );
   return rows[0];
 }
+
+export async function regenerateInviteCode(spaceId: string) {
+  const newCode = generateInviteCode();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const { rows } = await pool.query(
+    `UPDATE spaces SET invite_code = $1, invite_code_expires_at = $2 WHERE id = $3 RETURNING *`,
+    [newCode, expiresAt, spaceId],
+  );
+  return rows[0];
+}

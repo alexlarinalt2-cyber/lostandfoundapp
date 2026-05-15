@@ -73,3 +73,10 @@ export async function deleteSpace(req: Request, res: Response) {
   await spacesRepo.deleteSpace(req.params.id);
   res.json({ success: true, data: null });
 }
+
+export async function regenerateInviteCode(req: Request, res: Response) {
+  const membership = await requireMembership(req.params.id, req.user!.userId, 'manager');
+  if (!membership) return res.status(403).json({ success: false, error: { message: 'Forbidden' } });
+  const space = await spacesRepo.regenerateInviteCode(req.params.id);
+  res.json({ success: true, data: space });
+}

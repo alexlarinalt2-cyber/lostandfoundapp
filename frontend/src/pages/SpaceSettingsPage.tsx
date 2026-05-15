@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateSpaceSchema, type UpdateSpaceInput } from '@laf/shared';
-import { getSpace, listMembers, updateSpace, updateMemberRole, removeMember, leaveSpace, deleteSpace } from '../api/spaces.api';
+import { getSpace, listMembers, updateSpace, updateMemberRole, removeMember, leaveSpace, deleteSpace, regenerateInviteCode } from '../api/spaces.api';
 import { useAuth } from '../context/AuthContext';
 
 const AVATAR_GRADIENTS = [
@@ -75,6 +75,11 @@ export default function SpaceSettingsPage() {
   const deleteSpaceMutation = useMutation({
     mutationFn: () => deleteSpace(spaceId!),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['spaces'] }); navigate('/dashboard'); },
+  });
+
+  const regenerateMutation = useMutation({
+    mutationFn: () => regenerateInviteCode(spaceId!),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['space', spaceId] }),
   });
 
   function copyCode() {
@@ -248,14 +253,22 @@ export default function SpaceSettingsPage() {
               </div>
 
               <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', color: 'rgba(255,255,255,0.8)', fontSize: 12.5 }}>
-                <span>Code expires in <strong style={{ color: '#fff' }}>30 days</strong></span>
+                <span>
+                  {space?.invite_code_expires_at
+                    ? <>Code expires <strong style={{ color: '#fff' }}>{new Date(space.invite_code_expires_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</strong></>
+                    : <>Code expires in <strong style={{ color: '#fff' }}>30 days</strong></>
+                  }
+                </span>
                 <span style={{ opacity: 0.5 }}>·</span>
-                <button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', padding: '6px 12px', borderRadius: 9, cursor: 'pointer', fontWeight: 600, fontSize: 12.5, display: 'inline-flex', alignItems: 'center', gap: 5 }}
+                <button
+                  onClick={() => regenerateMutation.mutate()}
+                  disabled={regenerateMutation.isPending}
+                  style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', padding: '6px 12px', borderRadius: 9, cursor: 'pointer', fontWeight: 600, fontSize: 12.5, display: 'inline-flex', alignItems: 'center', gap: 5, opacity: regenerateMutation.isPending ? 0.6 : 1 }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.12)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg>
-                  Regenerate
+                  {regenerateMutation.isPending ? 'Regenerating…' : 'Regenerate'}
                 </button>
                 <button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', padding: '6px 12px', borderRadius: 9, cursor: 'pointer', fontWeight: 600, fontSize: 12.5, display: 'inline-flex', alignItems: 'center', gap: 5 }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.12)'; }}
