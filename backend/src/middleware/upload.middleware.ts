@@ -5,7 +5,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_FILE_SIZE, files: 3 },
+  limits: { fileSize: MAX_FILE_SIZE, files: 4 },
   fileFilter(_req, file, cb) {
     if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);

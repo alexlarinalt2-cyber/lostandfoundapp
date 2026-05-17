@@ -1,18 +1,32 @@
 import { pool } from '../../config/db';
 import * as itemsRepo from '../items/items.repository';
 import { emitToUser } from '../../services/socket.service';
-import { sendClaimNotificationEmail } from '../../services/email.service';
 import type { CreateClaimInput } from '@laf/shared';
 
-export async function createClaim(itemId: string, claimantId: string, input: CreateClaimInput) {
+export async function createClaim(
+  itemId: string,
+  claimantId: string,
+  input: CreateClaimInput,
+  photos?: { url: string; thumbnailUrl: string; order: number }[],
+) {
   const item = await itemsRepo.findById(itemId);
   if (!item) throw Object.assign(new Error('Item not found'), { status: 404 });
   if (item.status !== 'open') throw Object.assign(new Error('Item is not open for claims'), { status: 409 });
   if (item.reported_by === claimantId) throw Object.assign(new Error('Cannot claim your own item'), { status: 400 });
 
   const { rows } = await pool.query(
-    `INSERT INTO claims (item_id, claimant_id, message) VALUES ($1, $2, $3) RETURNING *`,
-    [itemId, claimantId, input.message],
+    `INSERT INTO claims (item_id, claimant_id, message, identifying_marks, photos, pickup_method, phone, availability)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    [
+      itemId,
+      claimantId,
+      input.message,
+      JSON.stringify(input.identifyingMarks ?? []),
+      JSON.stringify(photos ?? []),
+      input.pickupMethod ?? 'in_person',
+      input.phone ?? null,
+      input.availability ?? null,
+    ],
   );
   const claim = rows[0];
 
