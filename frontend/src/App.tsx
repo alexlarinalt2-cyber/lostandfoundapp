@@ -9,6 +9,8 @@ import ItemDetailPage from './pages/ItemDetailPage';
 import ReportItemPage from './pages/ReportItemPage';
 import ManagerDashboardPage from './pages/ManagerDashboardPage';
 import SpaceSettingsPage from './pages/SpaceSettingsPage';
+import ClaimPage from './pages/ClaimPage';
+import ClaimReviewPage from './pages/ClaimReviewPage';
 
 const Spinner = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
@@ -49,6 +51,8 @@ export default function App() {
       <Route path="/spaces/:spaceId/settings" element={<RequireAuth><SpaceSettingsPage /></RequireAuth>} />
       <Route path="/spaces/:spaceId/report" element={<RequireAuth><ReportItemPage /></RequireAuth>} />
       <Route path="/items/:itemId" element={<RequireAuth><ItemDetailPage /></RequireAuth>} />
+      <Route path="/items/:itemId/claim" element={<RequireAuth><ClaimPage /></RequireAuth>} />
+      <Route path="/items/:itemId/claims/:claimId/review" element={<RequireAuth><ClaimReviewPage /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

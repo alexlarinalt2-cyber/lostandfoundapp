@@ -5,7 +5,6 @@ import { getSpace } from '../api/spaces.api';
 import { listClaims, updateClaim } from '../api/claims.api';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
-import ClaimForm from '../components/claims/ClaimForm';
 import type { Item } from '@laf/shared';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -37,7 +36,6 @@ export default function ItemDetailPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const [showClaimForm, setShowClaimForm] = useState(false);
   const [selectedThumb, setSelectedThumb] = useState(0);
 
   const { data: item, isLoading } = useQuery<Item>({
@@ -58,7 +56,7 @@ export default function ItemDetailPage() {
   const { data: claims = [] } = useQuery({
     queryKey: ['claims', itemId],
     queryFn: () => listClaims(itemId!),
-    enabled: isOwner,
+    enabled: canManage,
   });
 
   const claimMutation = useMutation({
@@ -231,8 +229,8 @@ export default function ItemDetailPage() {
 
             {/* Action buttons */}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {!isOwner && item.status === 'open' && item.type === 'found' && (
-                <button className="laf-btn laf-btn-primary" onClick={() => setShowClaimForm(true)} style={{ flex: 1, justifyContent: 'center' }}>
+              {!isOwner && !isManager && item.status === 'open' && item.type === 'found' && (
+                <button className="laf-btn laf-btn-primary" onClick={() => navigate(`/items/${itemId}/claim`)} style={{ flex: 1, justifyContent: 'center' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="10"/></svg>
                   This is mine — submit claim
                 </button>
@@ -251,12 +249,12 @@ export default function ItemDetailPage() {
               )}
             </div>
 
-            {/* Claims (owner only) */}
-            {isOwner && claims.length > 0 && (
+            {/* Claims (owner/manager) */}
+            {canManage && claims.length > 0 && (
               <div className="laf-card">
                 <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 4px', fontSize: 17, fontWeight: 600, letterSpacing: '-0.012em', color: 'var(--fg-1)' }}>
                   Claims
-                  <span className="laf-pill laf-pill-indigo" style={{ fontSize: 10 }}>{claims.length} pending</span>
+                  <span className="laf-pill laf-pill-indigo" style={{ fontSize: 10 }}>{claims.length} total</span>
                 </h2>
                 <p style={{ margin: '0 0 16px', fontSize: 13.5, color: 'var(--fg-3)' }}>People who say this might be theirs.</p>
 
@@ -268,18 +266,22 @@ export default function ItemDetailPage() {
                       </span>
                       <strong style={{ fontWeight: 600, fontSize: 13.5, color: 'var(--fg-1)' }}>{claim.claimant_name}</strong>
                       <span className={`laf-pill ${claim.status === 'pending' ? 'laf-pill-amber' : claim.status === 'approved' ? 'laf-pill-emerald' : 'laf-pill-neutral'}`} style={{ marginLeft: 4, fontSize: 10 }}>{claim.status}</span>
-                      <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--fg-3)' }}>{claim.status}</span>
                     </div>
                     <p style={{ margin: '6px 0 10px 40px', fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.55 }}>"{claim.message}"</p>
-                    {claim.status === 'pending' && (
-                      <div style={{ marginLeft: 40, display: 'flex', gap: 6 }}>
-                        <button className="laf-btn laf-btn-emerald laf-btn-sm" onClick={() => claimMutation.mutate({ claimId: claim.id, status: 'approved' })}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                          Approve
-                        </button>
-                        <button className="laf-btn laf-btn-ghost laf-btn-sm" onClick={() => claimMutation.mutate({ claimId: claim.id, status: 'rejected' })}>Reject</button>
-                      </div>
-                    )}
+                    <div style={{ marginLeft: 40, display: 'flex', gap: 6 }}>
+                      <button className="laf-btn laf-btn-ghost laf-btn-sm" onClick={() => navigate(`/items/${itemId}/claims/${claim.id}/review`)}>
+                        Review claim →
+                      </button>
+                      {claim.status === 'pending' && (
+                        <>
+                          <button className="laf-btn laf-btn-emerald laf-btn-sm" onClick={() => claimMutation.mutate({ claimId: claim.id, status: 'approved' })}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            Approve
+                          </button>
+                          <button className="laf-btn laf-btn-ghost laf-btn-sm" onClick={() => claimMutation.mutate({ claimId: claim.id, status: 'rejected' })}>Reject</button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -340,13 +342,6 @@ export default function ItemDetailPage() {
         </div>
       </footer>
 
-      {showClaimForm && (
-        <ClaimForm
-          itemId={itemId!}
-          onClose={() => setShowClaimForm(false)}
-          onSubmitted={() => { setShowClaimForm(false); qc.invalidateQueries({ queryKey: ['item', itemId] }); }}
-        />
-      )}
     </>
   );
 }
