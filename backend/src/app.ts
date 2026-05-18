@@ -10,6 +10,7 @@ import { spacesRouter } from './modules/spaces/spaces.routes';
 import { itemsRouter, itemDetailRouter } from './modules/items/items.routes';
 import { claimsRouter } from './modules/claims/claims.routes';
 import { notificationsRouter } from './modules/notifications/notifications.routes';
+import { conversationsRouter } from './modules/conversations/conversations.routes';
 
 export function createApp() {
   const app = express();
@@ -30,6 +31,7 @@ export function createApp() {
   app.use('/api/items', itemDetailRouter);
   app.use('/api/items', claimsRouter);
   app.use('/api/notifications', notificationsRouter);
+  app.use('/api/conversations', conversationsRouter);
 
   app.use(errorHandler);
 

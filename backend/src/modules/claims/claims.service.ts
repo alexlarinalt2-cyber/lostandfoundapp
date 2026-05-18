@@ -68,6 +68,21 @@ export async function approveClaim(itemId: string, claimId: string, ownerId: str
       itemTitle: item.title,
     });
 
+    // Create conversation so claimant and finder can chat
+    await pool.query(
+      `INSERT INTO conversations (claim_id, item_id) VALUES ($1, $2) ON CONFLICT (claim_id) DO NOTHING`,
+      [claimId, itemId],
+    );
+    const { rows: convRows } = await pool.query(
+      `SELECT id FROM conversations WHERE claim_id = $1`, [claimId]
+    );
+    if (convRows[0]) {
+      await pool.query(
+        `INSERT INTO messages (conversation_id, sender_id, content, type) VALUES ($1, NULL, 'Claim approved · contact details exchanged', 'system')`,
+        [convRows[0].id]
+      );
+    }
+
     return claimRows[0];
   } catch (err) {
     await client.query('ROLLBACK');

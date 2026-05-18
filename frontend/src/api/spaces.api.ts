@@ -55,3 +55,13 @@ export async function regenerateInviteCode(spaceId: string) {
   const { data } = await apiClient.post(`/spaces/${spaceId}/regenerate-invite-code`);
   return data.data;
 }
+
+export async function lookupSpace(code: string) {
+  const { data } = await apiClient.get(`/spaces/lookup?code=${encodeURIComponent(code)}`);
+  return data.data;
+}
+
+export async function listSpaceClaims(spaceId: string) {
+  const { data } = await apiClient.get(`/spaces/${spaceId}/claims`);
+  return data.data;
+}
