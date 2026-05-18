@@ -75,10 +75,23 @@ export default function PickupPage() {
 
   const isClaimant = conv.claimant_id === user?.id;
   const myName = user?.displayName ?? 'You';
-  const myRole = isClaimant ? 'Original owner' : 'Finder';
+
+  // For lost items: claimant filed a "found report" (they ARE the finder),
+  // finder_id is the item reporter (the original owner who lost it).
+  // For found items: claimant is the owner reclaiming, finder_id reported the found item.
+  const isLostItem = conv.item_type === 'lost';
+  const myRole = isLostItem
+    ? (isClaimant ? 'Finder' : 'Original owner')
+    : (isClaimant ? 'Original owner' : 'Finder');
+  const otherRole = isLostItem
+    ? (isClaimant ? 'Original owner' : 'Finder')
+    : (isClaimant ? 'Finder' : 'Original owner');
   const otherName = isClaimant ? conv.finder_name : conv.claimant_name;
   const otherEmail = isClaimant ? conv.finder_email : conv.claimant_email;
-  const otherRole = isClaimant ? 'Finder' : 'Original owner';
+
+  // "I've collected it" belongs to the item owner in both flows:
+  // found item → owner is the claimant; lost item → owner is the item reporter (finder_id side)
+  const showCollectedButton = isLostItem ? !isClaimant : isClaimant;
 
   function handleQuickReply(text: string) {
     setDraft(text);
@@ -223,7 +236,7 @@ export default function PickupPage() {
                 ))}
               </div>
 
-              {isClaimant && (
+              {showCollectedButton && (
               <button
                 className="laf-btn laf-btn-emerald"
                 style={{ width: '100%', justifyContent: 'center' }}
