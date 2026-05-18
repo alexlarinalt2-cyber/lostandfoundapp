@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { listSpaces } from '../api/spaces.api';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
-import JoinSpaceModal from '../components/spaces/JoinSpaceModal';
 import CreateSpaceModal from '../components/spaces/CreateSpaceModal';
 
 /* Per-type accent gradient + icon colours */
@@ -47,7 +46,6 @@ function getInitials(name: string) {
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [showJoin, setShowJoin] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
 
   const { data: spaces = [], isLoading, refetch } = useQuery({
@@ -115,12 +113,12 @@ export default function DashboardPage() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <button className="laf-btn laf-btn-ghost" onClick={() => setShowJoin(true)}>
+            <Link to="/join" className="laf-btn laf-btn-ghost" style={{ textDecoration: 'none' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
               </svg>
               Join a space
-            </button>
+            </Link>
             <button className="laf-btn laf-btn-primary" onClick={() => setShowCreate(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5v14"/><path d="M5 12h14"/>
@@ -157,7 +155,7 @@ export default function DashboardPage() {
             <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--fg-1)', margin: '0 0 8px' }}>No spaces yet</p>
             <p style={{ fontSize: 14, color: 'var(--fg-3)', margin: '0 0 24px' }}>Join an existing space with an invite code, or create your own.</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
-              <button className="laf-btn laf-btn-ghost" onClick={() => setShowJoin(true)}>Join a space</button>
+              <Link to="/join" className="laf-btn laf-btn-ghost" style={{ textDecoration: 'none' }}>Join a space</Link>
               <button className="laf-btn laf-btn-primary" onClick={() => setShowCreate(true)}>Create a space</button>
             </div>
           </div>
@@ -243,7 +241,6 @@ export default function DashboardPage() {
         </div>
       </footer>
 
-      {showJoin && <JoinSpaceModal onClose={() => setShowJoin(false)} onJoined={() => { setShowJoin(false); refetch(); }} />}
       {showCreate && <CreateSpaceModal onClose={() => setShowCreate(false)} onCreated={() => { setShowCreate(false); refetch(); }} />}
     </>
   );

@@ -11,6 +11,8 @@ import ManagerDashboardPage from './pages/ManagerDashboardPage';
 import SpaceSettingsPage from './pages/SpaceSettingsPage';
 import ClaimPage from './pages/ClaimPage';
 import ClaimReviewPage from './pages/ClaimReviewPage';
+import JoinSpacePage from './pages/JoinSpacePage';
+import PickupPage from './pages/PickupPage';
 
 const Spinner = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
@@ -53,6 +55,8 @@ export default function App() {
       <Route path="/items/:itemId" element={<RequireAuth><ItemDetailPage /></RequireAuth>} />
       <Route path="/items/:itemId/claim" element={<RequireAuth><ClaimPage /></RequireAuth>} />
       <Route path="/items/:itemId/claims/:claimId/review" element={<RequireAuth><ClaimReviewPage /></RequireAuth>} />
+      <Route path="/items/:itemId/claims/:claimId/pickup" element={<RequireAuth><PickupPage /></RequireAuth>} />
+      <Route path="/join" element={<RequireAuth><JoinSpacePage /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

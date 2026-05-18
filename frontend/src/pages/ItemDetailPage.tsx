@@ -281,6 +281,11 @@ export default function ItemDetailPage() {
                           <button className="laf-btn laf-btn-ghost laf-btn-sm" onClick={() => claimMutation.mutate({ claimId: claim.id, status: 'rejected' })}>Reject</button>
                         </>
                       )}
+                      {claim.status === 'approved' && (
+                        <button className="laf-btn laf-btn-ghost laf-btn-sm" onClick={() => navigate(`/items/${itemId}/claims/${claim.id}/pickup`)}>
+                          View thread →
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
