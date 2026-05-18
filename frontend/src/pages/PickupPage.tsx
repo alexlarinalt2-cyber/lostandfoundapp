@@ -223,6 +223,7 @@ export default function PickupPage() {
                 ))}
               </div>
 
+              {isClaimant && (
               <button
                 className="laf-btn laf-btn-emerald"
                 style={{ width: '100%', justifyContent: 'center' }}
@@ -234,6 +235,7 @@ export default function PickupPage() {
                 </svg>
                 {resolveMutation.isPending ? 'Updating…' : "I've collected it — mark as resolved"}
               </button>
+              )}
             </div>
 
             {/* Match summary */}
