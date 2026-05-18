@@ -323,7 +323,7 @@ export default function FoundReportPage() {
                         placeholder="Add details (optional)…"
                         value={mark.detail}
                         onChange={e => updateMarkDetail(i, e.target.value)}
-                        style={{ marginTop: 10, marginLeft: 28 }}
+                        style={{ marginTop: 10, marginLeft: 28, width: 'calc(100% - 28px)', boxSizing: 'border-box' }}
                       />
                     )}
                   </div>
