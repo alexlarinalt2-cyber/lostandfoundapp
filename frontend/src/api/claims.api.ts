@@ -1,5 +1,10 @@
 import { apiClient } from './client';
 
+export async function getMyClaim(itemId: string) {
+  const { data } = await apiClient.get(`/items/${itemId}/my-claim`);
+  return data.data as { id: string; status: string } | null;
+}
+
 export async function listClaims(itemId: string) {
   const { data } = await apiClient.get(`/items/${itemId}/claims`);
   return data.data;

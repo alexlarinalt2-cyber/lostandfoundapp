@@ -79,6 +79,14 @@ export async function getClaim(req: Request, res: Response) {
   res.json({ success: true, data: { claim: rows[0], item } });
 }
 
+export async function getMyClaim(req: Request, res: Response) {
+  const { rows } = await pool.query(
+    `SELECT c.* FROM claims c WHERE c.item_id = $1 AND c.claimant_id = $2`,
+    [req.params.itemId, req.user!.userId],
+  );
+  res.json({ success: true, data: rows[0] ?? null });
+}
+
 export async function updateClaim(req: Request, res: Response) {
   const { status } = req.body as { status: 'approved' | 'rejected' };
   const result =

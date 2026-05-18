@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getItem, deleteItem, updateItem } from '../api/items.api';
 import { getSpace } from '../api/spaces.api';
-import { listClaims, updateClaim } from '../api/claims.api';
+import { listClaims, updateClaim, getMyClaim } from '../api/claims.api';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import type { Item } from '@laf/shared';
@@ -57,6 +57,13 @@ export default function ItemDetailPage() {
     queryKey: ['claims', itemId],
     queryFn: () => listClaims(itemId!),
     enabled: canManage,
+  });
+
+  // Claimant's own claim — always fetch so they can see status + thread link
+  const { data: myClaim } = useQuery({
+    queryKey: ['my-claim', itemId],
+    queryFn: () => getMyClaim(itemId!),
+    enabled: !!item && !isOwner && !isManager,
   });
 
   const claimMutation = useMutation({
@@ -229,11 +236,25 @@ export default function ItemDetailPage() {
 
             {/* Action buttons */}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {!isOwner && !isManager && item.status === 'open' && item.type === 'found' && (
+              {!isOwner && !isManager && item.status === 'open' && item.type === 'found' && !myClaim && (
                 <button className="laf-btn laf-btn-primary" onClick={() => navigate(`/items/${itemId}/claim`)} style={{ flex: 1, justifyContent: 'center' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="10"/></svg>
                   This is mine — submit claim
                 </button>
+              )}
+              {/* Claimant: show their claim status + thread link when approved */}
+              {myClaim && (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: myClaim.status === 'approved' ? 'rgba(16,185,129,0.06)' : 'rgba(248,250,252,0.8)', border: `1px solid ${myClaim.status === 'approved' ? 'rgba(16,185,129,0.2)' : 'var(--border-subtle)'}`, borderRadius: 12 }}>
+                  <span className={`laf-pill ${myClaim.status === 'approved' ? 'laf-pill-emerald' : myClaim.status === 'rejected' ? 'laf-pill-neutral' : 'laf-pill-amber'}`} style={{ fontSize: 10 }}>
+                    {myClaim.status === 'approved' ? 'Claim approved' : myClaim.status === 'rejected' ? 'Claim rejected' : 'Claim pending'}
+                  </span>
+                  {myClaim.status === 'approved' && (
+                    <button className="laf-btn laf-btn-emerald laf-btn-sm" onClick={() => navigate(`/items/${itemId}/claims/${myClaim.id}/pickup`)} style={{ marginLeft: 'auto' }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 11 18-8-8 18-2-8Z"/></svg>
+                      View thread
+                    </button>
+                  )}
+                </div>
               )}
               {canManage && item.status !== 'resolved' && (
                 <button className="laf-btn laf-btn-emerald" onClick={() => resolveMutation.mutate()} disabled={resolveMutation.isPending}>
