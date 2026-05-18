@@ -118,9 +118,6 @@ export default function ReportItemPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 320px', gap: 32, alignItems: 'start' }}>
           {/* Form */}
           <form className="laf-card" onSubmit={handleSubmit(onSubmit as SubmitHandler<CreateItemInput>)}>
-            <input type="hidden" {...register('type')} />
-            <input type="hidden" {...register('category')} />
-
             {/* Type toggle */}
             <div className="laf-field">
               <label className="laf-label">I'm reporting an item that's…</label>
