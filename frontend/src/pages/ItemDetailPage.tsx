@@ -242,6 +242,16 @@ export default function ItemDetailPage() {
                   This is mine — submit claim
                 </button>
               )}
+              {!isOwner && !isManager && item.status === 'open' && item.type === 'lost' && !myClaim && (
+                <button
+                  className="laf-btn"
+                  onClick={() => navigate(`/items/${itemId}/found-report`)}
+                  style={{ flex: 1, justifyContent: 'center', background: '#059669', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10, fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  I found this item
+                </button>
+              )}
               {/* Claimant: show their claim status + thread link when approved */}
               {myClaim && (
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: myClaim.status === 'approved' ? 'rgba(16,185,129,0.06)' : 'rgba(248,250,252,0.8)', border: `1px solid ${myClaim.status === 'approved' ? 'rgba(16,185,129,0.2)' : 'var(--border-subtle)'}`, borderRadius: 12 }}>
