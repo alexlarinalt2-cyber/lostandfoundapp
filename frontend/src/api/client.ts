@@ -1,9 +1,17 @@
 import axios from 'axios';
 
-let accessToken: string | null = null;
+const TOKEN_KEY = 'laf_access_token';
+
+let accessToken: string | null = localStorage.getItem(TOKEN_KEY);
+
+export function getAccessToken() {
+  return accessToken;
+}
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
 }
 
 export const apiClient = axios.create({
