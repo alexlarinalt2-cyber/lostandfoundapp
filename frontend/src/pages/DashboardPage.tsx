@@ -50,7 +50,10 @@ export default function DashboardPage() {
     queryFn: listSpaces,
   });
 
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const today = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   return (
     <>
@@ -102,7 +105,7 @@ export default function DashboardPage() {
               {today}
             </div>
             <h1 style={{ margin: 0, fontSize: 'clamp(28px,3vw,38px)', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.1, color: 'var(--fg-1)' }}>
-              Good day, {user?.displayName?.split(' ')[0]}.{' '}
+              {greeting}, {user?.displayName?.split(' ')[0]}.{' '}
               <span className="text-gradient">Your spaces at a glance.</span>
             </h1>
             <p style={{ margin: '10px 0 0', fontSize: 15, color: 'var(--fg-2)', lineHeight: 1.55 }}>
