@@ -2,8 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { listSpaces } from '../api/spaces.api';
 import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
-import CreateSpaceModal from '../components/spaces/CreateSpaceModal';
 
 /* Per-type accent gradient + icon colours */
 const SPACE_TYPE_STYLES: Record<string, { accent: string; iconBg: string; iconColor: string }> = {
@@ -46,9 +44,8 @@ function getInitials(name: string) {
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [showCreate, setShowCreate] = useState(false);
 
-  const { data: spaces = [], isLoading, refetch } = useQuery({
+  const { data: spaces = [], isLoading } = useQuery({
     queryKey: ['spaces'],
     queryFn: listSpaces,
   });
@@ -119,7 +116,7 @@ export default function DashboardPage() {
               </svg>
               Join a space
             </Link>
-            <button className="laf-btn laf-btn-primary" onClick={() => setShowCreate(true)}>
+            <button className="laf-btn laf-btn-primary" onClick={() => navigate('/spaces/create')}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5v14"/><path d="M5 12h14"/>
               </svg>
@@ -156,7 +153,7 @@ export default function DashboardPage() {
             <p style={{ fontSize: 14, color: 'var(--fg-3)', margin: '0 0 24px' }}>Join an existing space with an invite code, or create your own.</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
               <Link to="/join" className="laf-btn laf-btn-ghost" style={{ textDecoration: 'none' }}>Join a space</Link>
-              <button className="laf-btn laf-btn-primary" onClick={() => setShowCreate(true)}>Create a space</button>
+              <button className="laf-btn laf-btn-primary" onClick={() => navigate('/spaces/create')}>Create a space</button>
             </div>
           </div>
         ) : (
@@ -208,7 +205,7 @@ export default function DashboardPage() {
 
             {/* Add another space tile */}
             <button
-              onClick={() => setShowCreate(true)}
+              onClick={() => navigate('/spaces/create')}
               style={{ background: 'rgba(255,255,255,0.5)', border: '1.5px dashed var(--border-1)', borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 200, color: 'var(--fg-2)', cursor: 'pointer', transition: 'all 220ms cubic-bezier(0.22,1,0.36,1)', textAlign: 'center' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#fff'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-indigo-300)'; (e.currentTarget as HTMLElement).style.color = 'var(--brand-indigo-700)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.5)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-1)'; (e.currentTarget as HTMLElement).style.color = 'var(--fg-2)'; (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = ''; }}
@@ -241,7 +238,6 @@ export default function DashboardPage() {
         </div>
       </footer>
 
-      {showCreate && <CreateSpaceModal onClose={() => setShowCreate(false)} onCreated={() => { setShowCreate(false); refetch(); }} />}
     </>
   );
 }
