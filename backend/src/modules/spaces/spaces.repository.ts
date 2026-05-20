@@ -44,7 +44,11 @@ export async function leave(spaceId: string, userId: string) {
 }
 
 export async function findByInviteCode(code: string) {
-  const { rows } = await pool.query('SELECT * FROM spaces WHERE invite_code = $1', [code]);
+  const { rows } = await pool.query(
+    `SELECT s.*, (SELECT COUNT(*) FROM space_memberships WHERE space_id = s.id)::int AS member_count
+     FROM spaces s WHERE s.invite_code = $1`,
+    [code],
+  );
   return rows[0] ?? null;
 }
 
