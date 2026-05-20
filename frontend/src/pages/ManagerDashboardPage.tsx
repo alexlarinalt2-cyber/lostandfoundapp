@@ -38,9 +38,10 @@ export default function ManagerDashboardPage() {
 
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['items', spaceId, 'all'],
-    queryFn: () => listItems(spaceId!, { limit: 100 }),
+    queryFn: () => listItems(spaceId!, { limit: 50 }),
+    enabled: !!spaceId,
   });
 
   const items: Item[] = data?.items ?? [];
@@ -112,6 +113,14 @@ export default function ManagerDashboardPage() {
           </p>
         </header>
 
+        {isError && (
+          <div style={{ padding: '14px 18px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, marginBottom: 18, fontSize: 13.5, color: '#991B1B', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+            </svg>
+            Failed to load items. Check your connection or try refreshing.
+          </div>
+        )}
         {isLoading ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--fg-3)', fontSize: 14 }}>
             <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid var(--brand-indigo-600)', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
