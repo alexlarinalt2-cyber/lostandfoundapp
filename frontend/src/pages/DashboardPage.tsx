@@ -158,19 +158,21 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 18 }}>
-            {spaces.map((space: { id: string; name: string; type: string; member_role: string; address?: string }) => {
+            {spaces.map((space: { id: string; name: string; type: string; member_role: string; address?: string; member_count?: number; open_count?: number; found_count?: number; match_count?: number }) => {
               const st = SPACE_TYPE_STYLES[space.type] ?? SPACE_TYPE_STYLES.other;
               return (
                 <Link
                   key={space.id}
                   to={`/spaces/${space.id}`}
+                  className="laf-space-card"
                   style={{ position: 'relative', background: '#fff', border: '1px solid var(--border-subtle)', borderRadius: 18, padding: 22, cursor: 'pointer', boxShadow: 'var(--shadow-sm)', transition: 'all 220ms cubic-bezier(0.22,1,0.36,1)', overflow: 'hidden', display: 'block', textDecoration: 'none' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg)'; const arrow = (e.currentTarget as HTMLElement).querySelector('.space-arrow') as HTMLElement; if (arrow) { arrow.style.background = 'var(--brand-indigo-50)'; arrow.style.color = 'var(--brand-indigo-600)'; arrow.style.transform = 'translate(2px,-1px)'; } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'; const arrow = (e.currentTarget as HTMLElement).querySelector('.space-arrow') as HTMLElement; if (arrow) { arrow.style.background = 'rgba(15,23,42,0.04)'; arrow.style.color = 'var(--fg-3)'; arrow.style.transform = ''; } }}
                 >
                   {/* Top accent stripe */}
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: st.accent, borderRadius: '18px 18px 0 0' }} />
 
+                  {/* Icon + role pill row */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
                     <div style={{ width: 42, height: 42, borderRadius: 12, background: st.iconBg, color: st.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}>
                       <SpaceIcon type={space.type} />
@@ -186,19 +188,40 @@ export default function DashboardPage() {
                   </div>
 
                   <h3 style={{ margin: '0 0 4px', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--fg-1)' }}>{space.name}</h3>
-                  {space.address && (
-                    <div style={{ fontSize: 12.5, color: 'var(--fg-3)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s-8-4.5-8-11.5A8 8 0 0 1 20 10.5C20 17.5 12 22 12 22Z"/><circle cx="12" cy="10" r="3"/>
-                      </svg>
-                      {space.address}
-                    </div>
-                  )}
+                  <div style={{ fontSize: 12.5, color: 'var(--fg-3)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s-8-4.5-8-11.5A8 8 0 0 1 20 10.5C20 17.5 12 22 12 22Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    {space.address || 'No address'}
+                    {space.member_count != null && (
+                      <><span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--fg-4)', display: 'inline-block' }} /> {space.member_count} {space.member_count === 1 ? 'member' : 'members'}</>
+                    )}
+                  </div>
 
-                  {/* Arrow */}
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', top: 22, right: 22, color: 'var(--fg-3)', transition: 'all 220ms cubic-bezier(0.22,1,0.36,1)' }}>
-                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                  </svg>
+                  {/* Stats row */}
+                  <div style={{ display: 'flex', gap: 18, marginTop: 18, paddingTop: 16, borderTop: '1px solid var(--border-subtle)', paddingRight: 42 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fg-3)', marginBottom: 3 }}>Open</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#DC2626', fontVariantNumeric: 'tabular-nums' }}>{space.open_count ?? 0}</div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fg-3)', marginBottom: 3 }}>Found</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#059669', fontVariantNumeric: 'tabular-nums' }}>{space.found_count ?? 0}</div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fg-3)', marginBottom: 3 }}>Matches</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, background: 'linear-gradient(135deg,#6366F1,#06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: space.match_count ? 'transparent' : undefined, color: space.match_count ? undefined : 'var(--fg-3)', fontVariantNumeric: 'tabular-nums' }}>
+                        {space.match_count ?? '—'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Arrow — bottom-right, clear of stats */}
+                  <div className="space-arrow" style={{ position: 'absolute', bottom: 20, right: 20, width: 28, height: 28, padding: 5, borderRadius: 8, background: 'rgba(15,23,42,0.04)', color: 'var(--fg-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 220ms cubic-bezier(0.22,1,0.36,1)', boxSizing: 'border-box' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                    </svg>
+                  </div>
                 </Link>
               );
             })}

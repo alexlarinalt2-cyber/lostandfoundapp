@@ -7,7 +7,11 @@ function generateInviteCode(): string {
 
 export async function findByUser(userId: string) {
   const { rows } = await pool.query(
-    `SELECT s.*, sm.role AS member_role
+    `SELECT s.*, sm.role AS member_role,
+       (SELECT COUNT(*) FROM space_memberships WHERE space_id = s.id)::int AS member_count,
+       (SELECT COUNT(*) FROM items WHERE space_id = s.id AND type = 'lost'  AND status = 'open')::int AS open_count,
+       (SELECT COUNT(*) FROM items WHERE space_id = s.id AND type = 'found' AND status = 'open')::int AS found_count,
+       (SELECT COUNT(*) FROM items WHERE space_id = s.id AND status IN ('claimed','resolved'))::int AS match_count
      FROM spaces s
      JOIN space_memberships sm ON sm.space_id = s.id
      WHERE sm.user_id = $1
