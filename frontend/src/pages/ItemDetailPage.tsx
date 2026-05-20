@@ -63,7 +63,7 @@ export default function ItemDetailPage() {
   const { data: myClaim } = useQuery({
     queryKey: ['my-claim', itemId],
     queryFn: () => getMyClaim(itemId!),
-    enabled: !!item && !isOwner && !isManager,
+    enabled: !!item && !isOwner,
   });
 
   const claimMutation = useMutation({
@@ -236,13 +236,13 @@ export default function ItemDetailPage() {
 
             {/* Action buttons */}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {!isOwner && !isManager && item.status === 'open' && item.type === 'found' && !myClaim && (
+              {!isOwner && item.status === 'open' && item.type === 'found' && !myClaim && (
                 <button className="laf-btn laf-btn-primary" onClick={() => navigate(`/items/${itemId}/claim`)} style={{ flex: 1, justifyContent: 'center' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12h6"/><path d="M12 9v6"/><circle cx="12" cy="12" r="10"/></svg>
                   This is mine — submit claim
                 </button>
               )}
-              {!isOwner && !isManager && item.status === 'open' && item.type === 'lost' && !myClaim && (
+              {!isOwner && item.status === 'open' && item.type === 'lost' && !myClaim && (
                 <button
                   className="laf-btn"
                   onClick={() => navigate(`/items/${itemId}/found-report`)}

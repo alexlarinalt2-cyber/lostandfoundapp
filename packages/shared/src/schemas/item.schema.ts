@@ -38,7 +38,7 @@ export const ListItemsQuerySchema = z.object({
   status: ItemStatusEnum.optional(),
   search: z.string().max(100).optional(),
   cursor: z.string().optional(),
-  limit: z.coerce.number().min(1).max(50).default(20),
+  limit: z.coerce.number().min(1).max(200).default(20),
 });
 
 export type ItemType = z.infer<typeof ItemTypeEnum>;
